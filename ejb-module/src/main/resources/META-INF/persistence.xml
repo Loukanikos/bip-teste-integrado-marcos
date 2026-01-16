@@ -5,7 +5,7 @@
     <persistence-unit name="meuPU" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <!-- Entidades explicitamentes listadas para garantir carregamento -->
-        <class>com.example.ejb.Beneficio</class>
+        <class>com.example.ejb.model.Beneficio</class>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>
             <!-- Configurações JDBC para H2 -->
@@ -30,3 +30,5 @@
         </properties>
     </persistence-unit>
 </persistence>
+
+
