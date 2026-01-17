@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Stateless
-public class BeneficioEjbService {
+public class BeneficioEjbService implements BeneficioEjbServiceLocal, BeneficioEjbServiceRemote {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -37,24 +37,29 @@ public class BeneficioEjbService {
         this.entityManager = entityManager;
     }
 
+    @Override
     public Beneficio create(Beneficio beneficio) {
         entityManager.persist(beneficio);
         return beneficio;
     }
 
+    @Override
     public Beneficio findById(Long id) {
         return entityManager.find(Beneficio.class, id);
     }
 
+    @Override
     public List<Beneficio> findAll() {
         TypedQuery<Beneficio> query = entityManager.createQuery("SELECT b FROM Beneficio b", Beneficio.class);
         return query.getResultList();
     }
 
+    @Override
     public Beneficio update(Beneficio beneficio) {
         return entityManager.merge(beneficio);
     }
 
+    @Override
     public void delete(Long id) {
         Beneficio b = entityManager.find(Beneficio.class, id);
         if (b == null) {
@@ -84,6 +89,7 @@ public class BeneficioEjbService {
     // .transferencia maior que zero
 
     // Metodo coordenador: controla o loop de retry
+    @Override
     public void transfer(Long fromId, Long toId, BigDecimal amount) {
         int attempt = 0;
         boolean success = false;
@@ -105,6 +111,7 @@ public class BeneficioEjbService {
     }
 
     // Metodo isolado: cada chamada roda em uma nova transação
+    @Override
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void doTransfer(Long fromId, Long toId, BigDecimal amount) {
         Beneficio from = entityManager.find(Beneficio.class, fromId);
