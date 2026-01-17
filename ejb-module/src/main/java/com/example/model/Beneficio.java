@@ -1,4 +1,4 @@
-package com.example.ejb.model;
+package com.example.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;

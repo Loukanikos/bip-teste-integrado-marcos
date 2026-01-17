@@ -1,8 +1,8 @@
 package com.example.ejb.service;
 
 import com.example.ejb.BeneficioEjbService;
-import com.example.ejb.exception.BeneficioException;
-import com.example.ejb.model.Beneficio;
+import com.example.exception.BeneficioException;
+import com.example.model.Beneficio;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.TypedQuery;
@@ -26,14 +26,15 @@ public class BeneficioEjbServiceTest {
     private EntityManager em;
     private BeneficioEjbService service;
 
-
     @BeforeEach
     void setup() {
         em = Mockito.mock(EntityManager.class);
         service = new BeneficioEjbService();
         service.setEntityManager(em); // ✅ injeta o mock
     }
-    private BeneficioEjbService createServiceWithMocks(Beneficio from, Beneficio to, EntityManager em) throws Exception {
+
+    private BeneficioEjbService createServiceWithMocks(Beneficio from, Beneficio to, EntityManager em)
+            throws Exception {
         when(em.find(Beneficio.class, 1L)).thenReturn(from);
         when(em.find(Beneficio.class, 2L)).thenReturn(to);
         when(em.merge(any(Beneficio.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -111,6 +112,7 @@ public class BeneficioEjbServiceTest {
 
         assertThrows(BeneficioException.class, () -> service.delete(99L));
     }
+
     // TRANSFER
     @Test
     void testTransferSuccess() {
@@ -188,7 +190,7 @@ public class BeneficioEjbServiceTest {
         BeneficioEjbService spyService = Mockito.spy(realService);
 
         Long fromId = 1L;
-        Long toId   = 2L;
+        Long toId = 2L;
         BigDecimal amount = new BigDecimal("100");
 
         // Simula falha na primeira chamada e sucesso na segunda
@@ -201,13 +203,14 @@ public class BeneficioEjbServiceTest {
         // Verifica que houve 2 chamadas: falha + retry
         verify(spyService, times(2)).doTransfer(fromId, toId, amount);
     }
+
     @Test
     void testConcurrentTransfersSemSaldo() throws InterruptedException {
         BeneficioEjbService realService = new BeneficioEjbService(/* injete EntityManager mockado */);
         BeneficioEjbService spyService = Mockito.spy(realService);
 
         Long fromId = 1L;
-        Long toId   = 2L;
+        Long toId = 2L;
         BigDecimal amount = new BigDecimal("100");
 
         // Configura o spy para simular falha na primeira chamada e sucesso depois
@@ -237,6 +240,7 @@ public class BeneficioEjbServiceTest {
         verify(spyService, atLeast(2)).doTransfer(fromId, toId, amount);
 
     }
+
     @Test
     void testMultiThreadConcurrentTransfers() throws Exception {
         EntityManager em = Mockito.mock(EntityManager.class);
@@ -253,7 +257,7 @@ public class BeneficioEjbServiceTest {
         BeneficioEjbService spyService = Mockito.spy(realService);
 
         Long fromId = 1L;
-        Long toId   = 2L;
+        Long toId = 2L;
         BigDecimal amount = new BigDecimal("100");
 
         // Cada thread: primeira chamada falha, segunda aplica transferência
@@ -289,11 +293,5 @@ public class BeneficioEjbServiceTest {
 
         verify(spyService, atLeast(3)).doTransfer(fromId, toId, amount);
     }
-
-
-
-
-
-
 
 }

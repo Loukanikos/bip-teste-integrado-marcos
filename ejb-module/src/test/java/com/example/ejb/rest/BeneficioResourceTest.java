@@ -1,8 +1,8 @@
 package com.example.ejb.rest;
 
 import com.example.ejb.BeneficioEjbService;
-import com.example.ejb.model.Beneficio;
-import com.example.ejb.rest.BeneficioResource;
+import com.example.model.Beneficio;
+import com.example.rest.BeneficioResource;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,8 +33,6 @@ class BeneficioResourceTest {
         field.set(resource, service);
     }
 
-
-
     @Test
     void testDoCreate() {
         Beneficio beneficio = new Beneficio();
@@ -50,12 +48,12 @@ class BeneficioResourceTest {
         verify(service).create(beneficio);
     }
 
-
-
     @Test
     void testDoFindAll() {
-        Beneficio b1 = new Beneficio(); b1.setId(1L);
-        Beneficio b2 = new Beneficio(); b2.setId(2L);
+        Beneficio b1 = new Beneficio();
+        b1.setId(1L);
+        Beneficio b2 = new Beneficio();
+        b2.setId(2L);
 
         when(service.findAll()).thenReturn(Arrays.asList(b1, b2));
 
@@ -67,7 +65,8 @@ class BeneficioResourceTest {
 
     @Test
     void testDoFindById() {
-        Beneficio b = new Beneficio(); b.setId(1L);
+        Beneficio b = new Beneficio();
+        b.setId(1L);
 
         when(service.findById(1L)).thenReturn(b);
 
@@ -79,7 +78,8 @@ class BeneficioResourceTest {
 
     @Test
     void testDoUpdate() {
-        Beneficio b = new Beneficio(); b.setId(1L);
+        Beneficio b = new Beneficio();
+        b.setId(1L);
 
         when(service.update(b)).thenReturn(b);
 

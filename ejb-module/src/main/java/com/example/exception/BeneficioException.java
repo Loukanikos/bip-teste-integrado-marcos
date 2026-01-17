@@ -1,4 +1,4 @@
-package com.example.ejb.exception;
+package com.example.exception;
 
 public class BeneficioException extends RuntimeException {
 

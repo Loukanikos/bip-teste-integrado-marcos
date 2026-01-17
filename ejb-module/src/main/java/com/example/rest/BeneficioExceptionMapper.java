@@ -1,6 +1,7 @@
-package com.example.ejb.rest;
+package com.example.rest;
 
-import com.example.ejb.exception.BeneficioException;
+import com.example.exception.BeneficioException;
+
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
@@ -28,12 +29,10 @@ public class BeneficioExceptionMapper implements ExceptionMapper<BeneficioExcept
 
         ErrorResponse error = new ErrorResponse(
                 exception.getTipo().name(),
-                exception.getMessage()
-        );
+                exception.getMessage());
 
         return Response.status(status).entity(error).build();
     }
-
 
     // Classe auxiliar para resposta JSON
     public static class ErrorResponse {

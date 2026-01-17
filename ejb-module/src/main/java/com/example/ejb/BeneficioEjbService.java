@@ -1,7 +1,8 @@
 package com.example.ejb;
 
-import com.example.ejb.exception.BeneficioException;
-import com.example.ejb.model.Beneficio;
+import com.example.exception.BeneficioException;
+import com.example.model.Beneficio;
+
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionAttribute;
 import jakarta.ejb.TransactionAttributeType;

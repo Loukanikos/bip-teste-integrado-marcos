@@ -1,7 +1,8 @@
-package com.example.ejb.rest;
+package com.example.rest;
 
-import com.example.ejb.model.Beneficio;
 import com.example.ejb.BeneficioEjbService;
+import com.example.model.Beneficio;
+
 import jakarta.ejb.EJB;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -57,36 +58,36 @@ public class BeneficioResource {
     @POST
     @Path("/transfer")
     public Response transfer(@QueryParam("fromId") Long fromId,
-                             @QueryParam("toId") Long toId,
-                             @QueryParam("amount") BigDecimal amount) {
+            @QueryParam("toId") Long toId,
+            @QueryParam("amount") BigDecimal amount) {
         service.transfer(fromId, toId, amount);
         return Response.ok().entity("Transferência realizada com sucesso").build();
     }
+
     // Métodos internos para testabilidade (não usam Response)
-    Beneficio doCreate(Beneficio beneficio) {
+    public Beneficio doCreate(Beneficio beneficio) {
         return service.create(beneficio);
     }
 
-    List<Beneficio> doFindAll() {
+    public List<Beneficio> doFindAll() {
         return service.findAll();
     }
 
-    Beneficio doFindById(Long id) {
+    public Beneficio doFindById(Long id) {
         return service.findById(id);
     }
 
-    Beneficio doUpdate(Long id, Beneficio beneficio) {
+    public Beneficio doUpdate(Long id, Beneficio beneficio) {
         beneficio.setId(id);
         return service.update(beneficio);
     }
 
-    void doDelete(Long id) {
+    public void doDelete(Long id) {
         service.delete(id);
     }
 
-    void doTransfer(Long fromId, Long toId, BigDecimal amount) {
+    public void doTransfer(Long fromId, Long toId, BigDecimal amount) {
         service.transfer(fromId, toId, amount);
     }
-
 
 }
