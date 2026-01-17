@@ -21,7 +21,7 @@ public class BeneficioController {
     }
 
     @GetMapping("/{id}")
-    public Beneficio getById(@PathVariable Long id) {
+    public Beneficio getById(@PathVariable("id") Long id) {
         return beneficioEjbAdapter.getService().findById(id);
     }
 
@@ -31,13 +31,13 @@ public class BeneficioController {
     }
 
     @PutMapping("/{id}")
-    public Beneficio update(@PathVariable Long id, @RequestBody Beneficio beneficio) {
+    public Beneficio update(@PathVariable("id") Long id, @RequestBody Beneficio beneficio) {
         beneficio.setId(id);
         return beneficioEjbAdapter.getService().update(beneficio);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable("id") Long id) {
         beneficioEjbAdapter.getService().delete(id);
     }
 
