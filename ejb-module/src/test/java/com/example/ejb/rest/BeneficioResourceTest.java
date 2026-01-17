@@ -3,7 +3,6 @@ package com.example.ejb.rest;
 import com.example.ejb.BeneficioEjbService;
 import com.example.model.Beneficio;
 import com.example.rest.BeneficioResource;
-import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,7 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class BeneficioResourceTest {
