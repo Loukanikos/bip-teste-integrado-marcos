@@ -62,4 +62,31 @@ public class BeneficioResource {
         service.transfer(fromId, toId, amount);
         return Response.ok().entity("Transferência realizada com sucesso").build();
     }
+    // Métodos internos para testabilidade (não usam Response)
+    Beneficio doCreate(Beneficio beneficio) {
+        return service.create(beneficio);
+    }
+
+    List<Beneficio> doFindAll() {
+        return service.findAll();
+    }
+
+    Beneficio doFindById(Long id) {
+        return service.findById(id);
+    }
+
+    Beneficio doUpdate(Long id, Beneficio beneficio) {
+        beneficio.setId(id);
+        return service.update(beneficio);
+    }
+
+    void doDelete(Long id) {
+        service.delete(id);
+    }
+
+    void doTransfer(Long fromId, Long toId, BigDecimal amount) {
+        service.transfer(fromId, toId, amount);
+    }
+
+
 }

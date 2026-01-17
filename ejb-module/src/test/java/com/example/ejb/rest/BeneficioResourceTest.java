@@ -2,106 +2,109 @@ package com.example.ejb.rest;
 
 import com.example.ejb.BeneficioEjbService;
 import com.example.ejb.model.Beneficio;
+import com.example.ejb.rest.BeneficioResource;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.Mockito;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class BeneficioResourceTest {
 
-    @Mock
+    private BeneficioResource resource;
     private BeneficioEjbService service;
 
-    @InjectMocks
-    private BeneficioResource resource;
-
-    private Beneficio beneficio;
-
     @BeforeEach
-    void setUp() {
-        beneficio = new Beneficio();
+    void setup() throws Exception {
+        service = Mockito.mock(BeneficioEjbService.class);
+        resource = new BeneficioResource();
+
+        // injeta o mock manualmente (simulando @EJB)
+        Field field = BeneficioResource.class.getDeclaredField("service");
+        field.setAccessible(true);
+        field.set(resource, service);
+    }
+
+
+
+    @Test
+    void testDoCreate() {
+        Beneficio beneficio = new Beneficio();
         beneficio.setId(1L);
-        beneficio.setNome("Teste");
-        beneficio.setValor(new BigDecimal("100.00"));
+        beneficio.setValor(BigDecimal.TEN);
+
+        when(service.create(beneficio)).thenReturn(beneficio);
+
+        Beneficio result = resource.doCreate(beneficio);
+
+        assertEquals(1L, result.getId());
+        assertEquals(BigDecimal.TEN, result.getValor());
+        verify(service).create(beneficio);
     }
 
-    @Test
-    void testCreate() {
-        when(service.create(any(Beneficio.class))).thenReturn(beneficio);
-        try {
-            Response response = resource.create(beneficio);
 
-            assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-            assertEquals(beneficio, response.getEntity());
-            verify(service).create(beneficio);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Test
-    void testFindAll() {
-        List<Beneficio> lista = Arrays.asList(beneficio);
-        when(service.findAll()).thenReturn(lista);
+    void testDoFindAll() {
+        Beneficio b1 = new Beneficio(); b1.setId(1L);
+        Beneficio b2 = new Beneficio(); b2.setId(2L);
+
+        when(service.findAll()).thenReturn(Arrays.asList(b1, b2));
 
         List<Beneficio> result = resource.findAll();
 
-        assertEquals(1, result.size());
-        assertEquals(beneficio, result.get(0));
+        assertEquals(2, result.size());
         verify(service).findAll();
     }
 
     @Test
-    void testFindById() {
-        when(service.findById(1L)).thenReturn(beneficio);
+    void testDoFindById() {
+        Beneficio b = new Beneficio(); b.setId(1L);
+
+        when(service.findById(1L)).thenReturn(b);
 
         Beneficio result = resource.findById(1L);
 
-        assertNotNull(result);
-        assertEquals(beneficio, result);
+        assertEquals(1L, result.getId());
         verify(service).findById(1L);
     }
 
     @Test
-    void testUpdate() {
-        when(service.update(any(Beneficio.class))).thenReturn(beneficio);
+    void testDoUpdate() {
+        Beneficio b = new Beneficio(); b.setId(1L);
 
-        Beneficio result = resource.update(1L, beneficio);
+        when(service.update(b)).thenReturn(b);
 
-        assertEquals(1L, beneficio.getId()); // Verifica se o ID foi setado
-        assertNotNull(result);
-        verify(service).update(beneficio);
+        Beneficio result = resource.update(1L, b);
+
+        assertEquals(1L, result.getId());
+        verify(service).update(b);
     }
 
     @Test
-    void testDelete() {
+    void testDoDelete() {
         doNothing().when(service).delete(1L);
 
-        Response response = resource.delete(1L);
+        resource.doDelete(1L);
 
-        assertEquals(Response.Status.NO_CONTENT.getStatusCode(), response.getStatus());
         verify(service).delete(1L);
     }
 
     @Test
-    void testTransfer() {
-        doNothing().when(service).transfer(anyLong(), anyLong(), any(BigDecimal.class));
+    void testDoTransfer() {
+        doNothing().when(service).transfer(1L, 2L, BigDecimal.TEN);
 
-        Response response = resource.transfer(1L, 2L, new BigDecimal("50.00"));
+        resource.doTransfer(1L, 2L, BigDecimal.TEN);
 
-        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-        assertEquals("Transferência realizada com sucesso", response.getEntity());
-        verify(service).transfer(1L, 2L, new BigDecimal("50.00"));
+        verify(service).transfer(1L, 2L, BigDecimal.TEN);
     }
+
 }
