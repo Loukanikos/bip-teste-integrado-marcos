@@ -9,11 +9,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
-import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-
 
 @Stateless
 public class BeneficioEjbService {
@@ -33,7 +31,6 @@ public class BeneficioEjbService {
         super();
         this.entityManager = em;
     }
-
 
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -62,29 +59,28 @@ public class BeneficioEjbService {
         if (b == null) {
             throw new BeneficioException(
                     BeneficioException.Tipo.NOT_FOUND,
-                    "Benefício não encontrado para exclusão."
-            );
+                    "Benefício não encontrado para exclusão.");
         }
         entityManager.remove(b);
     }
 
-
     // public void transfer(Long fromId, Long toId, BigDecimal amount) {
-    //     Beneficio from = em.find(Beneficio.class, fromId);
-    //     Beneficio to   = em.find(Beneficio.class, toId);
+    // Beneficio from = em.find(Beneficio.class, fromId);
+    // Beneficio to = em.find(Beneficio.class, toId);
 
-    //     // BUG: sem validações, sem locking, pode gerar saldo negativo e lost update
-    //     from.setValor(from.getValor().subtract(amount));
-    //     to.setValor(to.getValor().add(amount));
+    // // BUG: sem validações, sem locking, pode gerar saldo negativo e lost update
+    // from.setValor(from.getValor().subtract(amount));
+    // to.setValor(to.getValor().add(amount));
 
-    //     em.merge(from);
-    //     em.merge(to);
+    // em.merge(from);
+    // em.merge(to);
     // }
     // TRANSFERÊNCIA (já existente, mas com melhorias)
-    //Usando Lock optimista e retry definido (melhoria, transformar em parametro de sistema)
-    //Validacoes: .existencia de origem e destino
-    //            .Saldo na origem
-    //            .transferencia maior que zero
+    // Usando Lock optimista e retry definido (melhoria, transformar em parametro de
+    // sistema)
+    // Validacoes: .existencia de origem e destino
+    // .Saldo na origem
+    // .transferencia maior que zero
 
     // Metodo coordenador: controla o loop de retry
     public void transfer(Long fromId, Long toId, BigDecimal amount) {
@@ -106,31 +102,29 @@ public class BeneficioEjbService {
             }
         }
     }
+
     // Metodo isolado: cada chamada roda em uma nova transação
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void doTransfer(Long fromId, Long toId, BigDecimal amount) {
         Beneficio from = entityManager.find(Beneficio.class, fromId);
-        Beneficio to   = entityManager.find(Beneficio.class, toId);
+        Beneficio to = entityManager.find(Beneficio.class, toId);
 
         if (from == null || to == null) {
             throw new BeneficioException(
                     BeneficioException.Tipo.NOT_FOUND,
-                    "Benefício origem ou destino não encontrado."
-            );
+                    "Benefício origem ou destino não encontrado.");
         }
 
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new BeneficioException(
                     BeneficioException.Tipo.INVALID_AMOUNT,
-                    "Valor da transferência deve ser positivo."
-            );
+                    "Valor da transferência deve ser positivo.");
         }
 
         if (from.getValor().compareTo(amount) < 0) {
             throw new BeneficioException(
                     BeneficioException.Tipo.INSUFFICIENT_BALANCE,
-                    "Saldo insuficiente no benefício origem."
-            );
+                    "Saldo insuficiente no benefício origem.");
         }
 
         // Atualiza valores
@@ -140,6 +134,5 @@ public class BeneficioEjbService {
         entityManager.merge(from);
         entityManager.merge(to);
     }
-
 
 }
