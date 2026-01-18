@@ -1,6 +1,8 @@
 package com.example.backend;
 
 import com.example.model.Beneficio;
+
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.*;
@@ -11,7 +13,7 @@ public class BeneficioController {
 
     private final BeneficioEjbAdapter beneficioEjbAdapter;
 
-    public BeneficioController(BeneficioEjbAdapter beneficioEjbAdapter) {
+    public BeneficioController(@Lazy BeneficioEjbAdapter beneficioEjbAdapter) {
         this.beneficioEjbAdapter = beneficioEjbAdapter;
     }
 
