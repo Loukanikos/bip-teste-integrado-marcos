@@ -1,0 +1,26 @@
+<div class="container">
+    <h2>{{ beneficio.id ? 'Editar' : 'Novo' }} Benefício</h2>
+
+    <div class="glass-card">
+        <form (ngSubmit)="salvar()">
+            <div class="form-group">
+                <label>Nome do Benefício</label>
+                <input [(ngModel)]="beneficio.nome" name="nome" placeholder="Ex: Vale Refeição" required />
+            </div>
+
+            <div class="form-group">
+                <label>Valor (R$)</label>
+                <input type="number" [(ngModel)]="beneficio.valor" name="valor" step="0.01" required />
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+                <button class="btn btn-outline" type="button" (click)="voltar()">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

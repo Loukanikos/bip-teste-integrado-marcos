@@ -1,10 +1,12 @@
-import { inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BeneficioDTO } from './beneficio.dto';
 import { TransferRequest } from './transfer-request';
 
-
+@Injectable({
+    providedIn: 'root'
+})
 export class BeneficiosService {
     private http = inject(HttpClient);
     private baseUrl = 'http://localhost:8080/api/v1/beneficios';
