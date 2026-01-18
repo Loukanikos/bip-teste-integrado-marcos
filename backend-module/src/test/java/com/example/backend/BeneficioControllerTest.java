@@ -1,5 +1,7 @@
 package com.example.backend;
 
+import com.example.backend.dto.BeneficioDTO;
+import com.example.backend.mapper.BeneficioMapper;
 import com.example.ejb.BeneficioEjbServiceLocal;
 import com.example.model.Beneficio;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(BeneficioController.class)
+@Import(BeneficioMapper.class)
 class BeneficioControllerTest {
 
     @Autowired
@@ -74,9 +78,9 @@ class BeneficioControllerTest {
 
     @Test
     void testCreate() throws Exception {
-        Beneficio b = new Beneficio();
-        b.setNome("Novo Benefício");
-        b.setValor(new BigDecimal("100.00"));
+        BeneficioDTO dto = new BeneficioDTO();
+        dto.setNome("Novo Benefício");
+        dto.setValor(new BigDecimal("100.00"));
 
         Beneficio created = new Beneficio();
         created.setId(1L);
@@ -87,26 +91,28 @@ class BeneficioControllerTest {
 
         mockMvc.perform(post("/api/v1/beneficios")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(b)))
-                .andExpect(status().isOk())
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.nome").value("Novo Benefício"));
     }
 
     @Test
     void testUpdate() throws Exception {
-        Beneficio b = new Beneficio();
-        b.setNome("Nome Atualizado");
+        BeneficioDTO dto = new BeneficioDTO();
+        dto.setNome("Nome Atualizado");
+        dto.setValor(new BigDecimal("200.00"));
 
         Beneficio updated = new Beneficio();
         updated.setId(1L);
         updated.setNome("Nome Atualizado");
+        updated.setValor(new BigDecimal("200.00"));
 
         when(beneficioEjbService.update(any(Beneficio.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/v1/beneficios/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(b)))
+                .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nome").value("Nome Atualizado"));
     }
@@ -114,7 +120,7 @@ class BeneficioControllerTest {
     @Test
     void testDelete() throws Exception {
         mockMvc.perform(delete("/api/v1/beneficios/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
         verify(beneficioEjbService, times(1)).delete(1L);
     }
